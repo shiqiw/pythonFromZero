@@ -1,6 +1,6 @@
 # string.split()
 
-# Leetcode practice Excel Sheet Column Title
+# Leetcode  Excel Sheet Column Title
 class Solution:
     # @param {integer} n
     # @return {string}

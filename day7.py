@@ -1,4 +1,4 @@
-# leetcode anagram
+# leetcode valid anagram
 
 class Solution:
     # @param {string} s
