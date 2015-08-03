@@ -1,4 +1,4 @@
-# leetcode compare version number
+# Leetcode  Compare Version Number
 # learn usage of map()
 # learn list operation
 
