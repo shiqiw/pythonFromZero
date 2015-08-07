@@ -1,4 +1,22 @@
+# Leetcode Pascal's triangle I and II
+
 class Solution:
+    # @param {integer} numRows
+    # @return {integer[][]}
+    def generate(self, numRows):
+        ans = []
+        if numRows <= 0:
+            return ans
+        row = 1
+        cur = [1]
+        while row <= numRows:
+            ans.append(cur)
+            cur = [0] + cur + [0]
+            tmp = [cur[i] + cur[i+1] for i in range(row+1)]
+            row += 1 
+            cur = tmp
+        return ans
+        
     # @param {integer} rowIndex
     # @return {integer[]}
     def getRow(self, rowIndex):
