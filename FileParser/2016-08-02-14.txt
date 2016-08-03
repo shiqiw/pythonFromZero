@@ -1,0 +1,31 @@
+Name            Count
+Oddish            0
+Magikarp          0
+Paras             1
+Metapod           0
+Eevee             1
+Doduo             1
+Venonat           1
+Drowzee           2
+Slowpoke          1
+Caterpie          1
+Pidgey            4
+NidoranFemale     0
+Rattata           1
+Squirtle          0
+Bellsprout        1
+Mankey            1
+Weedle            2
+Clefairy          1
+Poliwag           2
+Spearow           1
+Psyduck           1
+Krabby            0
+Jigglypuff        1
+Staryu            1
+Zubat             0
+NidoranMale       0
+
+
+Total kinds: 26 
+Total count: 24

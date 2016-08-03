@@ -1,0 +1,20 @@
+Name            Count
+Spearow           3
+Oddish            1
+Weedle            3
+Krabby            1
+Magikarp          1
+Pidgey            4
+Paras             1
+Growlithe         1
+Zubat             2
+NidoranFemale     2
+NidoranMale       2
+Pidgeotto         1
+Clefairy          1
+Poliwag           2
+Raticate          1
+
+
+Total kinds: 15 
+Total count: 26

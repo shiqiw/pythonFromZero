@@ -13,4 +13,8 @@ import sys
 def InputToBytes():
 	text = input("Please enter your text here: \n")
 	binary = text.encode(sys.getdefaultencoding())
+	print(binary)
 	return binary
+
+if __name__ == '__main__':
+	InputToBytes()
