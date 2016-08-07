@@ -5,3 +5,4 @@ Git ignore file
 # All .txt and .csv file in subfolders
 *.txt
 *.csv
+*.pyc
