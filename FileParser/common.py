@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import collections
+# import enum
 import sys
 
 def QueryUserChoice(question, options, default):
@@ -31,6 +32,10 @@ def QueryUserChoice(question, options, default):
 			return options[choice]
 		else:
 			sys.stdout.write("Oops. Cannot quite understand. Let's try again.\n")
+
+# class Bot(enum.Enum):
+# 	NecroBot = 1
+# 	PoGoRocketApiBot = 2
 
 class PokemonRecord(object):
 	def __init__(self):

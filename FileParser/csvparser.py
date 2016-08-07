@@ -62,25 +62,64 @@ def SummarizeTotalFileSize(fileList):
 	print("=> Input data size is %s byte(s)." % totalSize)
 
 def SummarizeSpecies(fileList):
-	species = sets.Set()
+	# If location kinds >= 2.
+	# I want to know:
+	# Total species, unique species in location, common species
+	locationExpression = re.compile("([a-zA-Z ]*)[0-9\-]*.csv")
+	locations = sets.Set()
+	for f in fileList:
+		location = locationExpression.match(f)
+		if location:
+			locations.add(location.group(1))
+
+	species = {}
+	for location in locations:
+		species[location] = sets.Set()
+
 	# \s matches any space when UNICODE flag is not set
 	# + matches one or more preceding charater
 	rowExpression = re.compile("([A-Za-z]*)\s+[0-9].*")
 
 	for f in fileList:
+		location = locationExpression.match(f).group(1)
 		with open(f, "r") as content:
 			for line in content:
 				match = rowExpression.match(line)
 				if match:
-					species.add(match.group(1))
+					species[location].add(match.group(1))
+
+	# if there are more than one locations
+	if len(species) > 1:
+		total = sets.Set()
+		common = sets.Set()
+
+		# calculate union and intersect
+		for key in species:
+			total = total.union(species[key])
+			if len(common) == 0:
+				common = species[key]
+			else:
+				common = common.intersection(species[key])
+
+		# calculate difference
+		# defined as this kind at least not appear in one location
+		for key in species:
+			species[key] = species[key].difference(common)
+
+		species["total"] = total
+		species["common"] = common
 
 	return species
 
 def PrintToFinalFile(species, outputFile):
+	# species is a dictionalry of set
 	output = open(outputFile, "w")
-	for s in species:
-		output.write(s + "\n")	
-	output.write("\n\nTotal: %s" % len(species))
+	for key in species:
+		output.write("==== " + key.upper() + " ====" + "\n")
+		if key != "total":
+			for value in species[key]:
+				output.write(value + "\n")
+		output.write("\ntotal: %s\n\n" % len(species[key]))
 
 	output.close()
 	print("=> Output size is %s byte(s)." % os.path.getsize(outputFile))

@@ -37,11 +37,13 @@ def CompileDataFile(inputFile):
 
 	dictionary = {}
 	captureExpression = re.compile("We caught a (.*) with")
+	captureExpression1 = re.compile("\(CatchSuccess.* \| \([A-Za-z]+\) (.*) Lvl: [0-9]")
 	transferExpression = re.compile("] (.*) was transferred.")
 
 	with open(inputFile, "r") as content:
 		for line in content:
 			capture = captureExpression.search(line)
+			capture1 = captureExpression1.search(line)
 			transfer = transferExpression.search(line)
 
 			# Bound, unbound methods
@@ -53,6 +55,12 @@ def CompileDataFile(inputFile):
 					# If not instantiate, get unbound method Capture() must be called 
 					# with PokemonRecord instance as first argument (got nothing instead)
 					dictionary[capture.group(1)] = common.PokemonRecord().Capture()
+
+			if capture1:
+				if capture1.group(1) in dictionary:
+					dictionary[capture1.group(1)] = dictionary[capture1.group(1)].Capture()
+				else:
+					dictionary[capture1.group(1)] = common.PokemonRecord().Capture()
 
 			if transfer:
 				if transfer.group(1) in dictionary:
