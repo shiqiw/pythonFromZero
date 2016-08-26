@@ -6,45 +6,54 @@ import sys
 import common
 
 def GetDataFileName():
-	# listdir return a list of names.
-	files = [f for f in os.listdir('.') if f.endswith(".txt")]
+	# listdir return a list of file names, using relative path
+	# To search for certain file type:
+	#files = [f for f in os.listdir('.') if f.endswith(".txt")]
 	mostRecentFile = ""
 	optionMarker = "A"
 	defaultMarker = ""
 	options = {}
 
-	for f in files:
-		# O(n) to get most recdnt modified file.
+	for f in os.listdir('./Raw'):
+		# O(n) to get most recent modified file.
+		f = './Raw/' + f
 		if mostRecentFile == "":
 			mostRecentFile = f
 		else:
 			if (os.path.getmtime(f) > os.path.getmtime(mostRecentFile)):
 				mostRecentFile = f
 
+		# Create option, set default option to most recent file
 		options[optionMarker] = f
 		if f == mostRecentFile:
 			defaultMarker = optionMarker
 		optionMarker = chr(ord(optionMarker) + 1)
 
+	# No data file is available
 	if len(options) == 0:
 		return ""
 
-	return common.QueryUserChoice("Please select file name.", options, defaultMarker)
+	return common.QueryUserChoice("Please select raw file to process.", options, defaultMarker)
 
-def CompileDataFile(inputFile):
-	print("=> Start processing %s." % inputFile)
-	print("=> Input data size is %s byte(s)." % os.path.getsize(inputFile))
+def CompileDataFile(dataFile):
+	print("=> Start processing %s." % dataFile)
+	print("=> Input data size is %s byte(s)." % os.path.getsize(dataFile))
 
 	dictionary = {}
+	# python regex, '.' any char, '*' zero or more preceding char
 	captureExpression = re.compile("We caught a (.*) with")
-	captureExpression1 = re.compile("\(CatchSuccess.* \| \([A-Za-z]+\) (.*) Lvl: [0-9]")
+	# '(','|' are special char, need escape, '+' is one or more preceding
+	captureExpression1 = re.compile("\(CatchSuccess.* \| \([A-Za-z]+\) (.*) Lvl: [0-9]+")
 	transferExpression = re.compile("] (.*) was transferred.")
+	transferExpression1 = re.compile("\(TRANSFERED\) ([A-Za-z]+)\s+")
 
-	with open(inputFile, "r") as content:
+	with open(dataFile, "r") as content:
 		for line in content:
+			# search looks through full string
 			capture = captureExpression.search(line)
 			capture1 = captureExpression1.search(line)
 			transfer = transferExpression.search(line)
+			transfer1 = transferExpression1.search(line)
 
 			# Bound, unbound methods
 			# Instance, static and class methods
@@ -68,30 +77,36 @@ def CompileDataFile(inputFile):
 				else:
 					dictionary[transfer.group(1)] = common.PokemonRecord().Transfer()
 
+			if transfer1:
+				if transfer1.group(1) in dictionary:
+					dictionary[transfer1.group(1)] = dictionary[transfer1.group(1)].Transfer()
+				else:
+					dictionary[transfer1.group(1)] = common.PokemonRecord().Transfer()
+
 	return dictionary
 
-def GetResultFileName(inputFile):
+def GetTransFileName(dataFile):
 	# Define data file name starts with location info
 	# Match looks in beginning of the string
 	# Search looks through entire string
 	locationExpression = re.compile("([a-zA-Z ]*)[0-9]*.txt")
-	location = locationExpression.match(inputFile)
+	location = locationExpression.search(dataFile)
 
 	# This is get current time
 	#time = datetime.datetime.now().strftime("%Y-%m-%d-%H")
 	# This is get data file last  modified time
-	time = datetime.datetime.fromtimestamp(os.path.getmtime(inputFile))
+	time = datetime.datetime.fromtimestamp(os.path.getmtime(dataFile))
 	formatTime = time.strftime("%Y-%m-%d-%H")
 
 	if location:
-		return "{0}-{1}.csv".format(location.group(1), formatTime)
+		return "./Trans/{0}-{1}.csv".format(location.group(1), formatTime)
 	else:
-		return formatTime + ".csv"
+		return "./Trans/" + formatTime + ".csv"
 
-def PrintToResultFile(content, outputFile):
-	print("=> Start writing to output %s." % outputFile)
+def PrintToTransFile(content, transFile):
+	print("=> Start writing to output %s." % transFile)
 
-	output = open(outputFile, "w")
+	output = open(transFile, "w")
 	totalCount = 0
 	totalExperience = 0
 
@@ -111,5 +126,5 @@ def PrintToResultFile(content, outputFile):
 	output.write("Total Exp  : %s " % totalExperience)
 
 	output.close()
-	print("=> Output size is %s byte(s)." % os.path.getsize(outputFile))
+	print("=> Output size is %s byte(s)." % os.path.getsize(transFile))
 	return

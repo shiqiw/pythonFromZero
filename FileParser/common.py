@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import collections
-# import enum
 import sys
 
 def QueryUserChoice(question, options, default):
@@ -11,8 +10,8 @@ def QueryUserChoice(question, options, default):
 	default: a string like "A"
 	Return user choice value.
 	"""
-	# TODO: Build validate dictionary like 
-	# {"A": "Bellevue.txt", "a": "Bellevue.txt", "Bellevue": "Bellevue.txt"}
+	# TODO: Build validate dictionary according to options like 
+	# {"A": "Bellevue.txt"} => {"A": "Bellevue.txt", "a": "Bellevue.txt", "Bellevue": "Bellevue.txt"}
 	# Right now use options as validate dictionary
 	while True:
 		sys.stdout.write("=> " + question + "\n")
@@ -33,6 +32,7 @@ def QueryUserChoice(question, options, default):
 		else:
 			sys.stdout.write("Oops. Cannot quite understand. Let's try again.\n")
 
+# import enum
 # class Bot(enum.Enum):
 # 	NecroBot = 1
 # 	PoGoRocketApiBot = 2
@@ -56,3 +56,4 @@ class PokemonRecord(object):
 		self.candy += 1
 		return self
 
+	# TODO: introduce evolve action

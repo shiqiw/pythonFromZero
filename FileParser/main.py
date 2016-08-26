@@ -1,35 +1,33 @@
 #!/usr/bin/env python
-import os
-import sets
 import common
-import csvparser
-import txtparser
+import rawparser
+import transparser
 
 def main():
-	# Select parser for .txt file or .csv file.
-	# Define data file as .txt file and result file as .csv file.
+	# Select parser.
+	# Define data file as raw file and trans-product as trans file.
 	option = common.QueryUserChoice("Please select file type.", 
-									{"A": "txt", "B": "csv"}, 
+									{"A": "raw", "B": "trans"}, 
 									"A")
 
 	# Define parameter name as data and result.
-	if option == "txt":
-		dataFile = txtparser.GetDataFileName()
+	if option == "raw":
+		dataFile = rawparser.GetDataFileName()
 		if dataFile == "":
 			print("=> No meat for grinding. Exit.")
 			return
-		content = txtparser.CompileDataFile(dataFile)
-		resultFile = txtparser.GetResultFileName(dataFile)
-		txtparser.PrintToResultFile(content, resultFile)
+		content = rawparser.CompileDataFile(dataFile)
+		transFile = rawparser.GetTransFileName(dataFile)
+		rawparser.PrintToTransFile(content, transFile)
 	# Define parameter as middle and final.
 	else:
-		middleFile = csvparser.GetLocationName()
-		if middleFile == "":
+		location = transparser.GetLocationName()
+		if location == "":
 			print("=> No meat for grinding. Exit.")
 			return
-		summary = csvparser.CompileMiddleFile(middleFile)
-		finalFile = middleFile + ".csv"
-		csvparser.PrintToFinalFile(summary, finalFile)
+		summary = transparser.CompileTransFiles(location)
+		finalFile = "./Final" + location + ".csv"
+		transparser.PrintToFinalFile(summary, finalFile)
 		
 	print("=> Finish.")
 	return
