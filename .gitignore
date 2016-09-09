@@ -2,7 +2,11 @@
 Git ignore file
 ###
 
-# All .txt and .csv file in subfolders
 *.txt
 *.csv
+
+# Python compiled file
 *.pyc
+
+# a file that stores custom attributes of its containing folder
+.DS_Store
