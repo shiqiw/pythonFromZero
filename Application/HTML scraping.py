@@ -23,6 +23,7 @@
 # after reading blogs, decide to switch to beautiful soup
 # https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 from BeautifulSoup import BeautifulSoup
+import os
 import random
 from sets import Set
 import sys
@@ -30,17 +31,18 @@ from urllib2 import HTTPError
 from urllib2 import urlopen
 
 def QueryUpdate(question, target):
-	sys.stdout.write("=> " + question + " (default no)\n")
-	sys.stdout.write("   Yes\n")
-	sys.stdout.write("   No\n")
-	
-	yesOption = Set(['YES', 'Y'])
-	choice = raw_input().upper()
-	if choice in yesOption:
-		sys.stdout.write("Start to update {0}.\n".format(target))
-		return True
-	else:
-		return False
+	if os.path.isfile("./" + target + ".txt"):
+		sys.stdout.write("=> " + question + " (default no)\n")
+		sys.stdout.write("   Yes\n")
+		sys.stdout.write("   No\n")
+		
+		yesOption = Set(['YES', 'Y'])
+		choice = raw_input().upper()
+		if not choice in yesOption:
+			return False
+
+	sys.stdout.write("Start to update {0}.\n".format(target))
+	return True
 
 def GetWoodInfo():
 	base = 'http://zh.harrypotter.wikia.com'
@@ -112,6 +114,7 @@ def GetWandInfo():
 
 	sys.stdout.write("Your wand information is available now:\n")
 	sys.stdout.write("{0}+\n{1}\n".format(woodChoice[choicew], coreChoice[choicec]))
+	sys.stdout.write("More details can be found at ./Wand.txt\n")
 	return
 
 def Main():
