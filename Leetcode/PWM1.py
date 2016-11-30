@@ -21,7 +21,7 @@ Delete entry by 'del <ID>', then print info to console, confirm deletion
 import datetime
 # https://api.mongodb.com/python/current/tutorial.html
 from pymongo import MongoClient
-from Utility import Operation
+from PWMUtil1 import Operation
 
 # relational database is more useful for this purpose
 # but can achieve with indexing and query
