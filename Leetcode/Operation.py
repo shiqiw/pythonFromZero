@@ -13,18 +13,16 @@ class Operation(object):
 
 		entry["_id"] = raw_input("=> Question ID: ")
 		entry["title"] = raw_input("=> Question title: ")
+		entry["description"] = Util.scrape_content(entry["title"], \
+			"meta", {"name": "description"}, Util.Column.DESCRIPTION)
 
 		try:
-			entry["description"] = Util.scrape_content(entry["title"], \
-				"meta", {"name": "description"}, Util.Column.DESCRIPTION)
 			entry["tags"] = Util.scrape_content(entry["title"], "span", \
 				{"class": "hidebutton"}, Util.Column.TAGS)
 			entry["similar"] = Util.scrape_content(entry["title"], "span", \
 				{"class": "hidebutton"}, Util.Column.SIMILAR)
 		except:
-			Util.Printer.print_warning("Unable to scrape content online.")
-			entry["description"] = Util.query_paragraph( \
-				"Question description:")
+			Util.Printer.print_warning("Unable to scrape tags or similar.")
 			entry["tags"] = Util.query_array( \
 				"Question tags:")
 			entry["similar"] = Util.query_array( \
@@ -49,17 +47,21 @@ class Operation(object):
 		while True:
 			direction = Util.query_option("Search direction?", \
 				["Summary", "Tags", "Key word", "ID", "Random", "Exit"], direction)
+
 			if direction == "Summary":
-				print("Total entries %s" %(collection.count()))
-				tags = ", ".join(collection.distinct("tags"))
-				print("Tags:\n" + tags)
+				print("Total entry count 465, current count %s" %(collection.count()))
+				tags = collection.distinct("tags")
+				print("Total tag count 31, current count %s" %(len(tags)))
+				print("Tags:\n" + ", ".join(tags))
+
 			elif direction == "Tags":
 				tag = raw_input("=> Tag:")
 				entries = collection.find({"tags": tag})
 				for entry in entries:
-					Util.Printer.print_entry(entry)
 					if Util.query_option("Continue?", ["Yes", "No"], "Yes") == "No":
 						break
+					Util.Printer.print_entry(entry)
+
 			elif direction == "Key word":
 				key = raw_input("=> Key word:")
 				entries = collection.find({"title": {"$regex": ".*"+key+".*"}})
@@ -70,7 +72,8 @@ class Operation(object):
 					if Util.query_option("Continue?", ["Yes", "No"], "Yes") == "No":
 						break
 					Util.Printer.print_entry(entry)
-			elif direction != "Exit":
+
+			elif direction != "Exit": # ID or Similar
 				entry = {}
 				if direction == "ID":
 					_id = raw_input("=> Id:")
@@ -83,26 +86,27 @@ class Operation(object):
 
 				curr = sets.Set(entry["similar"])
 				next = sets.Set()
-				visited = sets.Set()
+				useful = sets.Set()
+				discard = sets.Set([entry["title"]])
 				while len(curr) != 0:
 					for s in curr:
-						if not s in visited:
-							visited.add(s)
+						if not (s in useful or s in discard):
 							e = collection.find_one({"title": s})
 							if e != None:
+								useful.add(s)
 								for ns in e["similar"]:
 									next.add(ns)
+							else:
+								discard.add(s)
+					# TODO: memory management
 					curr = next
 					next = sets.Set()
 
-				print("Total similar %s" % len(visited))
-				for s in visited:
+				print("Total similar %s" % len(useful))
+				for s in useful:
 					if Util.query_option("Continue?", ["Yes", "No"], "Yes") == "No":
 						break
-					# case sensitive problem
-					e = collection.find_one({"title": s})
-					if e != None:
-						Util.Printer.print_entry(e)
+					Util.Printer.print_entry(collection.find_one({"title": s}))
 			else:
 				break
 
@@ -165,4 +169,5 @@ def main():
 		else:
 			print "Have a nice day!"
 			break
+
 main()

@@ -28,6 +28,10 @@ class Printer:
 		print Printer.ERROR + content + Printer.ENDC
 
 	@classmethod
+	def print_bold(cls, content):
+		print Printer.BOLD + content + Printer.ENDC
+
+	@classmethod
 	def print_header(cls, *args):
 		content = ". ".join(args)
 		print Printer.BOLD + content + Printer.ENDC
@@ -35,6 +39,7 @@ class Printer:
 	@classmethod
 	def print_code(cls, content):
 		# TODO: deal with /* */ comment
+		# TODO: deal with built-in types
 		lines = content.split('\n')
 		for line in lines:
 			if "//" in line:
@@ -44,18 +49,20 @@ class Printer:
 
 	@classmethod
 	def print_entry(cls, entry):
+		# TODO: provide option to not print tags, similar and solutions
+		# TODO: real mode, or get ride of entry content dependency
 		Printer.print_header(entry["_id"], entry["title"])
 		print entry["description"]
 
-		raw_input("Show tags?")
+		raw_input(Printer.BOLD + "Show tags?" + Printer.ENDC)
 		for tag in entry["tags"]:
 			print tag
 
-		raw_input("Show similar?")
+		raw_input(Printer.BOLD + "Show similar?" + Printer.ENDC)
 		for similar in entry["similar"]:
 			print similar
 
-		raw_input("Show solution?")
+		raw_input(Printer.BOLD + "Show solution?" + Printer.ENDC)
 		for solution in entry["solutions"]:
 			Printer.print_code(solution)
 
@@ -128,10 +135,7 @@ def query_array(question, paragraph = False, prevs = []):
 			if para != "":
 				ret.append(para)
 		else:
-			if len(ret) == 0:
-				Printer.print_error("Please provide value.")
-			else:
-				break
+			break
 
 	return ret
 
@@ -142,6 +146,7 @@ class Column(object):
 
 def scrape_content(title, tag, attribute, column):
 	# TODO: scrape content where password is needed
+	# TODO: catch exception when tags or similar is missing
 	path = "-".join(title.replace('-', ' ').split())
 	url = "https://leetcode.com/problems/" + path + "/"
 	soup = BeautifulSoup.BeautifulSoup(urlopen(url).read())
@@ -166,10 +171,3 @@ def scrape_content(title, tag, attribute, column):
 			ans = title.search(anchor.getText())
 			similar.append(ans.group(1))
 		return similar
-
-
-def main():
-	print scrape_content("3Sum", "span", \
-				{"class": "hidebutton"}, Column.TAGS)
-
-#main()
