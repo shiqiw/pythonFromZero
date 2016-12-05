@@ -1,4 +1,4 @@
-import json
+from datetime import date
 from pymongo import MongoClient
 import random
 import sets
@@ -49,10 +49,19 @@ class Operation(object):
 				["Summary", "Tags", "Key word", "ID", "Random", "Exit"], direction)
 
 			if direction == "Summary":
-				print("Total entry count 465, current count %s" %(collection.count()))
+				ids = collection.distinct("_id")
 				tags = collection.distinct("tags")
-				print("Total tag count 31, current count %s" %(len(tags)))
-				print("Tags:\n" + ", ".join(tags))
+				days = (date(2016, 12, 25) - date.today()).days
+				# 12.25 429-78
+				# 12.31 book
+				# 1.19 78+real
+				# 2.9 2nd pass
+				avg = (429-78-len(ids))/days
+
+				Util.Printer.print_bold( \
+					"Progress: count ({}/429), tags ({}/31), daily avg {}".format(len(ids), len(tags), avg))
+				print ", ".join(ids)
+				print ", ".join(tags)
 
 			elif direction == "Tags":
 				tag = raw_input("=> Tag:")
@@ -167,7 +176,7 @@ def main():
 		elif operation == "Delete":
 			Operation.delete(collection)
 		else:
-			print "Have a nice day!"
+			Util.Printer.print_bold("Have a nice day!")
 			break
 
 main()

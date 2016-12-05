@@ -147,7 +147,7 @@ class Column(object):
 def scrape_content(title, tag, attribute, column):
 	# TODO: scrape content where password is needed
 	# TODO: catch exception when tags or similar is missing
-	path = "-".join(title.replace('-', ' ').split())
+	path = "-".join(title.replace('\'', '').replace('-', ' ').split())
 	url = "https://leetcode.com/problems/" + path + "/"
 	soup = BeautifulSoup.BeautifulSoup(urlopen(url).read())
 	content = soup.findAll(tag, attribute)
