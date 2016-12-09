@@ -13,8 +13,14 @@ class Operation(object):
 
 		entry["_id"] = raw_input("=> Question ID: ")
 		entry["title"] = raw_input("=> Question title: ")
-		entry["description"] = Util.scrape_content(entry["title"], \
-			"meta", {"name": "description"}, Util.Column.DESCRIPTION)
+
+		try:
+			entry["description"] = Util.scrape_content(entry["title"], \
+				"meta", {"name": "description"}, Util.Column.DESCRIPTION)
+		except:
+			Util.Printer.print_warning("Unable to scrape description.")
+			entry["description"] = Util.query_paragraph( \
+				"Question description:")
 
 		try:
 			entry["tags"] = Util.scrape_content(entry["title"], "span", \
@@ -56,10 +62,10 @@ class Operation(object):
 				# 12.31 book
 				# 1.19 78+real
 				# 2.9 2nd pass
-				avg = (429-78-len(ids))/days
+				avg = (433-79-len(ids))/days
 
 				Util.Printer.print_bold( \
-					"Progress: count ({}/429), tags ({}/31), daily avg {}".format(len(ids), len(tags), avg))
+					"Progress: count ({}/433), tags ({}/31), daily avg {}".format(len(ids), len(tags), avg))
 				print ", ".join(ids)
 				print ", ".join(tags)
 
@@ -91,6 +97,9 @@ class Operation(object):
 					random.seed()
 					rand = random.randint(0, collection.count())
 					entry = collection.find().limit(-1).skip(rand).next()
+
+				if entry == None:
+					continue
 				Util.Printer.print_entry(entry)
 
 				curr = sets.Set(entry["similar"])

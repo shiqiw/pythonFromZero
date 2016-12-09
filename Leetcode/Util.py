@@ -109,6 +109,7 @@ def query_paragraph(question = None):
 			return '\n'.join(lines)
 
 def query_array(question, paragraph = False, prevs = []):
+	# TODO: provide cancel option
 	sys.stdout.write("=> " + question + "\n")
 
 	ret = []
@@ -147,7 +148,12 @@ class Column(object):
 def scrape_content(title, tag, attribute, column):
 	# TODO: scrape content where password is needed
 	# TODO: catch exception when tags or similar is missing
-	path = "-".join(title.replace('\'', '').replace('-', ' ').split())
+	# sometimes it will forbidden, like No.96
+
+	# http://stackoverflow.com/questions/7002206/expected-buffer-object-error-on-string-translate-python-2-6
+	chars_to_remove = "'\'()"
+	title = title.translate(None, chars_to_remove).replace('-', ' ')
+	path = "-".join(title.split())
 	url = "https://leetcode.com/problems/" + path + "/"
 	soup = BeautifulSoup.BeautifulSoup(urlopen(url).read())
 	content = soup.findAll(tag, attribute)
