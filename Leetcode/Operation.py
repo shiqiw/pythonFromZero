@@ -160,23 +160,28 @@ class Operation(object):
 		# entry retrieved from DB can be used as dictionary
 		Printer.print_entry_file(entry)
 
+		if Query.query_option("Update description?", ["Yes", "No"], "Yes") == "Yes":
+			description = Query.query_paragraph("Update description.")
+			collection.update_one({"_id": _id}, \
+				{"$set": {"description": description}})
+
 		if Query.query_option("Update company?", ["Yes", "No"], "Yes") == "Yes":
-			company = Query.query_array("Update company.", False)
+			company = Query.query_array("Update company.")
 			collection.update_one({"_id": _id}, \
 				{"$set": {"company": company}})
 
 		if Query.query_option("Update tags?", ["Yes", "No"], "Yes") == "Yes":
-			tags = Query.query_array("Update tags.", False)
+			tags = Query.query_array("Update tags.")
 			collection.update_one({"_id": _id}, \
 				{"$set": {"tags": tags}})
 
 		if Query.query_option("Update similar?", ["Yes", "No"], "Yes") == "Yes":
-			similar = Query.query_array("Update similar.", False)
+			similar = Query.query_array("Update similar.")
 			collection.update_one({"_id": _id}, \
 				{"$set": {"similar": similar}})
 
 		if Query.query_option("Update solutions?", ["Yes", "No"], "Yes") == "Yes":
-			solutions = Query.query_array("Update solutions.", False)
+			solutions = Query.query_array("Update solutions.", True)
 			collection.update_one({"_id": _id}, \
 				{"$set": {"solutions": solutions}})
 
