@@ -74,7 +74,7 @@ class Operation(object):
 			elif direction != "Exit": # ID or Similar
 				entry = {}
 				if direction == "ID":
-					_id = raw_input("=> Id:")
+					_id = Query.query_line("Id:")
 					entry = collection.find_one({"_id": _id})
 				else:
 					random.seed()
@@ -116,7 +116,7 @@ class Operation(object):
 
 	@staticmethod
 	def all(collection):
-		# TODO: find in description and tags as well
+		# TODO: order by object id and record last visited entry
 		entries = collection.find()
 		Printer.print_multi_entry_console(entries)
 
@@ -151,6 +151,7 @@ class Operation(object):
 
 	@staticmethod
 	def update(collection, entry = None):
+		# problematic: update_one does not work
 		# TODO: update _id, title, description
 		# TODO: when to use find_one_and_update
 		if entry == None:

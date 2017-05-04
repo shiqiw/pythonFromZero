@@ -75,16 +75,19 @@ class Printer:
 		print entry["description"]
 
 		if Query.query_option("Show company?", ["Yes", "No"], "Yes") == "Yes":
-			for company in entry["company"]:
-				print company
+			if "company" in entry:
+				for company in entry["company"]:
+					print company
 
 		if Query.query_option("Show tags?", ["Yes", "No"], "Yes") == "Yes":
-			for tag in entry["tags"]:
-				print tag
+			if "tags" in entry:
+				for tag in entry["tags"]:
+					print tag
 
 		if Query.query_option("Show similar?", ["Yes", "No"], "Yes") == "Yes":
-			for similar in entry["similar"]:
-				print similar
+			if "similar" in entry:
+				for similar in entry["similar"]:
+					print similar
 
 		if Query.query_option("Show solution?", ["Yes", "No"], "Yes") == "Yes":
 			count = 1
@@ -111,22 +114,25 @@ class Printer:
 		target.write("\n")
 		target.write(entry["description"])
 
-		target.write("\n\ncompany")
-		for company in entry["company"]:
-			target.write("\n")
-			target.write(company)
+		target.write("\n\nCompany:")
+		if "company" in entry:
+			for company in entry["company"]:
+				target.write("\n")
+				target.write(company)
 
-		target.write("\n\ntags")
-		for tag in entry["tags"]:
-			target.write("\n")
-			target.write(tag)
+		target.write("\n\nTags:")
+		if "tags" in entry:
+			for tag in entry["tags"]:
+				target.write("\n")
+				target.write(tag)
 
-		target.write("\n\nsimilar")
-		for similar in entry["similar"]:
-			target.write("\n")
-			target.write(similar)
+		target.write("\n\nSimilar:")
+		if "similar" in entry:
+			for similar in entry["similar"]:
+				target.write("\n")
+				target.write(similar)
 
-		target.write("\n\nsolution")
+		target.write("\n\nSolution:")
 		for solution in entry["solutions"]:
 			target.write("\n")
 			target.write(solution)
@@ -185,7 +191,7 @@ class Query:
 			Printer.print_bold("=> " + question)
 
 		line = raw_input()
-		if line == "q!":
+		if line == ":q!":
 			return ""
 		else:
 			return line
@@ -231,19 +237,16 @@ class Query:
 			para = Query.query_paragraph()
 		else:
 			para = Query.query_line()
-		if para != "":
-			ret.append(para)
 
-		while True:
+		while para != "":
+			ret.append(para)
 			if Query.query_option("Add more?", ["Yes", "No"], "Yes") == "Yes":
 				if paragraph:
 					para = Query.query_paragraph()
 				else:
 					para = Query.query_line()
-				if para != "":
-					ret.append(para)
 			else:
-				break
+				para = ""
 
 		return ret
 
