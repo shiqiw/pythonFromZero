@@ -35,4 +35,5 @@ def main():
 # This function will be 
 # automatically selected as 
 # the start point of execution
-main()
+if __name__ == '__main__':
+  main()
